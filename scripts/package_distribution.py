@@ -9,7 +9,7 @@ import zipfile
 root = Path(__file__).resolve().parents[1]
 repo = root / 'build/repository'
 dist = root / 'dist'
-required = [repo / f'com/rowix/gifsnap/gifsnap-{name}/0.1.0/gifsnap-{name}-0.1.0.aar' for name in ('client', 'compose')]
+required = [repo / f'com/rowix/gifsnap/gifsnap-{name}/0.1.1/gifsnap-{name}-0.1.1.aar' for name in ('client', 'compose')]
 if not all(p.is_file() for p in required):
     raise SystemExit('Build both Maven publications before packaging.')
 dist.mkdir(exist_ok=True)
@@ -26,7 +26,7 @@ def zip_files(target, pairs):
             archive.writestr(info, file.read_bytes())
 
 repository_files = [(p, 'repository/' + p.relative_to(repo).as_posix()) for p in repo.rglob('*') if p.is_file()]
-zip_files(dist / 'gifsnap-android-maven-0.1.0.zip', repository_files)
+zip_files(dist / 'gifsnap-android-maven-0.1.1.zip', repository_files)
 for file in required:
     shutil.copy2(file, dist / file.name)
 excluded = {'build', '.gradle', '.kotlin', '.idea', 'dist', 'evidence', '.git', '__pycache__'}
@@ -38,9 +38,9 @@ for file in root.rglob('*'):
     if file.is_symlink() or file.name in {'local.properties', '.DS_Store'} or file.name.startswith(('.env', '._')) or file.suffix in {'.log', '.keystore', '.jks'}:
         continue
     pairs.append((file, 'gifsnap-android/' + relative.as_posix()))
-zip_files(dist / 'gifsnap-android-source-0.1.0.zip', pairs)
+zip_files(dist / 'gifsnap-android-source-0.1.1.zip', pairs)
 manifest = {
-    'version': '0.1.0',
+    'version': '0.1.1',
     'repositoryRoot': str(repo),
     'hostedRepositoryPath': '/sdk/android/',
     'repository': {p.relative_to(repo).as_posix(): {'sha256': digest(p), 'bytes': p.stat().st_size} for p, _ in repository_files},

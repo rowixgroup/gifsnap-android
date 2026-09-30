@@ -146,9 +146,5 @@ private fun MediaCard(gif: GifItem, loader: ImageLoader, onSelect: (GifItem) -> 
         }
         Text(title, maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
-        gif.source?.takeIf { it.isNotBlank() }?.let { source ->
-            Text("Source: $source", maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp))
-        }
     }
 }

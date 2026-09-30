@@ -1,6 +1,6 @@
 # GifSnap for Android
 
-A typed Kotlin coroutine client and an animated GIF/sticker picker for Jetpack Compose. The picker provides submitted search, trending, pagination, selection, light/dark/system themes, source labels and error/retry states. It plays full GIF and animated WebP media; static previews are used only if the full media cannot load.
+A typed Kotlin coroutine client and an animated GIF/sticker picker for Jetpack Compose. The picker provides submitted search, trending, pagination, selection, light/dark/system themes and error/retry states. It plays full GIF and animated WebP media; static previews are used only if the full media cannot load.
 
 ## Requirements
 
@@ -11,7 +11,9 @@ A typed Kotlin coroutine client and an animated GIF/sticker picker for Jetpack C
 
 ## Install
 
-GifSnap distributes these artifacts through its own Maven repository, **not Maven Central or JitPack**. Add the repository in `settings.gradle.kts` alongside the standard dependency repositories:
+Each [GitHub release](https://github.com/rowixgroup/gifsnap-android/releases) includes a Maven-layout ZIP that can be used immediately as a local repository. Hosted Maven availability is announced with the corresponding GifSnap website release; a GitHub tag alone does not indicate that hosted artifacts are available.
+
+When your version is hosted, use GifSnap’s own Maven repository, **not Maven Central or JitPack**. Add the repository in `settings.gradle.kts` alongside the standard dependency repositories:
 
 ```kotlin
 dependencyResolutionManagement {
@@ -30,13 +32,13 @@ Add the picker to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.rowix.gifsnap:gifsnap-compose:0.1.0")
+    implementation("com.rowix.gifsnap:gifsnap-compose:0.1.1")
 }
 ```
 
-This includes the client and animated Coil decoder transitively. For a custom UI, depend on `com.rowix.gifsnap:gifsnap-client:0.1.0` instead. An `INTERNET` permission is merged from the client library. The SDK does not enable cleartext networking or change the application's network security policy.
+This includes the client and animated Coil decoder transitively. For a custom UI, depend on `com.rowix.gifsnap:gifsnap-client:0.1.1` instead. An `INTERNET` permission is merged from the client library. The SDK does not enable cleartext networking or change the application's network security policy.
 
-For an offline/local distribution, unzip `gifsnap-android-maven-0.1.0.zip` and point the same Maven repository block at the extracted `repository` directory, for example `url = uri("$rootDir/vendor/gifsnap/repository")`. Retain the `.pom` and `.module` files: a bare AAR does not declare transitive dependencies. Google/Maven Central dependencies must still be available from those repositories or your existing cache.
+For an offline/local distribution, unzip `gifsnap-android-maven-0.1.1.zip` and point the same Maven repository block at the extracted `repository` directory, for example `url = uri("$rootDir/vendor/gifsnap/repository")`. Retain the `.pom` and `.module` files: a bare AAR does not declare transitive dependencies. Google/Maven Central dependencies must still be available from those repositories or your existing cache.
 
 ## Compose picker
 
@@ -60,7 +62,7 @@ fun MessageGifPicker(onGifSelected: (String) -> Unit) {
 
 Place the picker in a container with bounded height, such as a dialog, bottom sheet or screen column. `modifier` customizes the container. `GifSnapTheme.Light`, `Dark`, `System`, and `Inherit` are supported; `Inherit` uses the host Material color scheme. `initialMediaType = MediaType.Stickers` starts in sticker mode. Keep the client with `remember` or a longer-lived owner rather than constructing it on every recomposition.
 
-Selection returns the original `GifItem`. The host controls insertion, sending and dismissal. The SDK does not send messages, request storage access or download media to the user's gallery. Titles and source labels are displayed; the picker retains its “Powered by GifSnap” link. Returned source metadata is displayed as provided by the API, not independently verified ownership. Preserve any additional provider attribution required for your integration.
+Selection returns the original `GifItem`. The host controls insertion, sending and dismissal. The SDK does not send messages, request storage access or download media to the user's gallery. Cards display the GIF title and retain the “Powered by GifSnap” link. Provider/source metadata remains available on the returned `GifItem` for application logic, but is not rendered in cards or accessibility labels.
 
 Search runs on explicit submission. Replacing a search or leaving composition cancels the old work; a generation guard also rejects stale results from custom data sources. Load more is explicit. Empty and duplicate-only pages stop pagination. Failed pagination retains already displayed items and retries the same page.
 
@@ -100,7 +102,7 @@ Set `ANDROID_HOME` to your installed SDK and use JDK 17+ supported by your Gradl
 python3 scripts/package_distribution.py
 ```
 
-The local Maven repository is created at `build/repository`. `test-consumer` resolves the Maven artifacts rather than project modules; `-PgifsnapRepository=https://gifsnap.com/sdk/android` checks the hosted repository after publication. Device tests use original synthetic GIF/WebP fixtures, check that both formats advance through three frame colors, and exercise selection/source attribution/search and empty/retry UI states. No test provider assets or credentials are bundled.
+The local Maven repository is created at `build/repository`. `test-consumer` resolves the Maven artifacts rather than project modules; `-PgifsnapRepository=https://gifsnap.com/sdk/android` checks the hosted repository after publication. Device tests use original synthetic GIF/WebP fixtures, check that both formats advance through three frame colors, and exercise selection/search, absence of provider labels, and empty/retry UI states. No test provider assets or credentials are bundled.
 
 The source archive excludes build products, caches, emulator data, logs and local settings. Release AARs, source JARs, POM/Gradle metadata, checksums, and a Maven-layout ZIP are generated separately.
 

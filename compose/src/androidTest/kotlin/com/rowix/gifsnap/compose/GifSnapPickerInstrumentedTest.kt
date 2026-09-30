@@ -26,7 +26,7 @@ class GifSnapPickerInstrumentedTest {
     private fun item(id: String) = GifItem(id, "Result $id", "file:///android_asset/animated.gif", "file:///android_asset/animated.webp", 48, 48, "gif", "Synthetic test")
     private fun page(items: List<GifItem>, number: Int = 1, more: Boolean = false) = GifPage(items, GifPagination(number, 24, 2, more, if (more) number + 1 else null, (number - 1) * 24L))
 
-    @Test fun searchSelectionSourceAttributionAndThemeRender() {
+    @Test fun searchSelectionAndThemeRender() {
         var selected: GifItem? = null
         val source = object : GifSnapDataSource {
             override suspend fun search(query: String, mediaType: MediaType, page: Int, limit: Int) = page(listOf(item(query)))
@@ -37,8 +37,9 @@ class GifSnapPickerInstrumentedTest {
         compose.onNodeWithText("Search", useUnmergedTree = true).performClick()
         compose.waitUntil(5000) { compose.onAllNodesWithText("Result cats", substring = true).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Result cats", substring = true).performClick()
-        compose.runOnIdle { assertEquals("cats", selected?.id) }
-        compose.onNodeWithText("Source: Synthetic test", substring = true).assertExists()
+        compose.runOnIdle { assertEquals("cats", selected?.id); assertEquals("Synthetic test", selected?.source) }
+        compose.onNodeWithText("Source:", substring = true).assertDoesNotExist()
+        compose.onNodeWithText("Synthetic test", substring = true).assertDoesNotExist()
         compose.onNodeWithText("Powered by GifSnap").assertExists()
     }
 
