@@ -128,18 +128,20 @@ private fun PickerContent(client: GifSnapDataSource, onSelect: (GifItem) -> Unit
 
 @Composable
 private fun MediaCard(gif: GifItem, loader: ImageLoader, onSelect: (GifItem) -> Unit) {
-    var attempt by remember(gif.url, gif.previewUrl) { mutableIntStateOf(0) }
-    val preview = attempt > 0 && gif.previewUrl != gif.url
-    val failed = attempt > (if (gif.previewUrl != gif.url) 1 else 0)
+    val sources = remember(gif.url, gif.previewUrl, gif.animatedPreview) { com.rowix.gifsnap.client.gifImageUrls(gif) }
+    var attempt by remember(sources) { mutableIntStateOf(0) }
+    val current = sources.getOrNull(attempt)
+    val preview = current == gif.previewUrl && current != gif.url && current != gif.animatedPreview?.url
+    val failed = current == null
     val title = gif.title.ifBlank { if (gif.type == "sticker") "Sticker" else "GIF" }
     Column(Modifier.clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceContainer)
         .clickable(role = Role.Button, onClickLabel = "Select $title") { onSelect(gif) }
         .semantics(mergeDescendants = true) {}) {
         Box(Modifier.fillMaxWidth().aspectRatio(if (gif.width > 0 && gif.height > 0)
             (gif.width.toFloat() / gif.height).coerceIn(0.5f, 2f) else 1f), contentAlignment = Alignment.Center) {
-            if (!failed) AsyncImage(model = if (preview) gif.previewUrl else gif.url, imageLoader = loader,
+            if (!failed) AsyncImage(model = current, imageLoader = loader,
                 contentDescription = null, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize(),
-                onError = { attempt++ })
+                onError = { attempt = (attempt + 1).coerceAtMost(sources.size) })
             else Text("Image unavailable", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(8.dp))
             if (preview && !failed) Text("Preview", style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.align(Alignment.BottomStart).background(MaterialTheme.colorScheme.surface).padding(4.dp))

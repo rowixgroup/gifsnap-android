@@ -26,7 +26,24 @@ data class GifItem(
     val type: String,
     val source: String? = null,
     val contentId: String? = null,
+    val animatedPreview: GifAnimatedPreview? = null,
 )
+
+/** Optional verified animation; keep GifItem.url when sharing or sending. */
+data class GifAnimatedPreview(val url: String, val mimeType: String, val width: Int, val height: Int, val byteSize: Long? = null) {
+    init {
+        val parsed = requireSafeUrl(url)
+        val expected = mapOf("image/gif" to "gif", "image/webp" to "webp", "video/mp4" to "mp4", "video/webm" to "webm")[mimeType]
+        val extension = parsed.pathSegments.last().substringAfterLast('.', "").lowercase()
+        require(expected != null && (extension.isEmpty() || extension == expected))
+        require(width in 1..480 && height in 1..480 && (byteSize == null || byteSize in 1..524288))
+    }
+}
+
+/** Bounded image-only fallback chain. Selection always returns the unchanged item. */
+fun gifImageUrls(item: GifItem): List<String> = listOfNotNull(
+    item.animatedPreview?.takeIf { it.mimeType.startsWith("image/") }?.url, item.url, item.previewUrl,
+).distinct()
 
 enum class MediaType(internal val path: String) { Gifs("gifs"), Stickers("stickers") }
 
@@ -168,7 +185,8 @@ internal fun parsePage(body: String): GifPage {
         if (type != "gif" && type != "sticker") invalid("Invalid media type")
         GifItem(item.string("id")!!, item.string("title", nonEmpty = false)!!, url, preview,
             item.integer("width"), item.integer("height"), type,
-            item.string("source", optional = true, nonEmpty = false), item.string("content_id", optional = true))
+            item.string("source", optional = true, nonEmpty = false), item.string("content_id", optional = true),
+            parseAnimatedPreview(item["animated_preview"]))
     }
     val pagination = root["pagination"] as? JsonObject ?: invalid("Missing pagination")
     val hasNextValue = pagination["has_next"] as? JsonPrimitive ?: invalid("Invalid has_next")
@@ -185,6 +203,14 @@ internal fun parsePage(body: String): GifPage {
     return GifPage(data, GifPagination(page, limit, pagination.number("total"),
         hasNext, nextPage, pagination.number("offset")), root.string("query", optional = true, nonEmpty = false))
 }
+
+private fun parseAnimatedPreview(value: JsonElement?): GifAnimatedPreview? = runCatching {
+    val item = value as? JsonObject ?: return null
+    val animated = item["animated"] as? JsonPrimitive ?: return null
+    if (animated.isString || animated.booleanOrNull != true) return null
+    GifAnimatedPreview(item.string("url")!!, item.string("mime_type")!!, item.integer("width", 1), item.integer("height", 1),
+        if (item.containsKey("byte_size")) item.number("byte_size", 1) else null)
+}.getOrNull()
 
 /** Presentation-only deduplication. Raw API pages and counts are not modified. First occurrence wins. */
 fun distinctGifs(items: List<GifItem>): List<GifItem> {

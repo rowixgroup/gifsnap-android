@@ -11,6 +11,20 @@ class GifSnapClientTest {
     private fun response(rows: String = row, page: Int = 1, hasNext: Boolean = true, next: String = "2") =
         """{"data":[$rows],"pagination":{"page":$page,"limit":24,"total":9007199254740993,"has_next":$hasNext,"next_page":$next,"offset":0},"query":"cats"}"""
 
+    @Test fun animatedPreviewUsesBoundedFallbackAndKeepsOriginalUrl() {
+        val preview = """{"url":"https://cdn.example/small.webp","mime_type":"image/webp","width":160,"height":120,"byte_size":15000,"animated":true}"""
+        fun parse(value: String) = parsePage(response(row.dropLast(1) + ",\"animated_preview\":" + value + "}")).data.first()
+        val item = parse(preview)
+        assertEquals(listOf("https://cdn.example/small.webp", item.url, item.previewUrl), gifImageUrls(item))
+        assertEquals("https://cdn.example/a.gif?token=one&size=full", item.url)
+        for (bad in listOf("null", "{}", preview.replace("true", "false"), preview.replace("15000", "524289"),
+            preview.replace("160", "481"), preview.replace("https://cdn.example/small.webp", "file:///tmp/x"))) {
+            val parsed = parse(bad); assertNull(parsed.animatedPreview)
+            assertEquals(listOf(parsed.url, parsed.previewUrl), gifImageUrls(parsed))
+        }
+        assertEquals(listOf(item.url), gifImageUrls(item.copy(previewUrl = item.url, animatedPreview = null)))
+    }
+
     @Test fun preservesIdsUrlsContentIdentityAndRawCounts() {
         val page = parsePage(response("$row,$row"))
         assertEquals(2, page.data.size)

@@ -1,6 +1,6 @@
 # GifSnap for Android
 
-A typed Kotlin coroutine client and an animated GIF/sticker picker for Jetpack Compose. The picker provides submitted search, trending, pagination, selection, light/dark/system themes and error/retry states. It plays full GIF and animated WebP media; static previews are used only if the full media cannot load.
+A typed Kotlin coroutine client and an animated GIF/sticker picker for Jetpack Compose. The picker provides submitted search, trending, pagination, selection, light/dark/system themes and error/retry states. It prefers validated small animated previews when available, then falls back to full GIF or animated WebP media. Static previews are used only if both animation candidates fail. Selection returns the original full media URL.
 
 ## Requirements
 
@@ -32,13 +32,13 @@ Add the picker to your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.rowix.gifsnap:gifsnap-compose:0.1.1")
+    implementation("com.rowix.gifsnap:gifsnap-compose:0.1.2")
 }
 ```
 
-This includes the client and animated Coil decoder transitively. For a custom UI, depend on `com.rowix.gifsnap:gifsnap-client:0.1.1` instead. An `INTERNET` permission is merged from the client library. The SDK does not enable cleartext networking or change the application's network security policy.
+This includes the client and animated Coil decoder transitively. For a custom UI, depend on `com.rowix.gifsnap:gifsnap-client:0.1.2` instead. An `INTERNET` permission is merged from the client library. The SDK does not enable cleartext networking or change the application's network security policy.
 
-For an offline/local distribution, unzip `gifsnap-android-maven-0.1.1.zip` and point the same Maven repository block at the extracted `repository` directory, for example `url = uri("$rootDir/vendor/gifsnap/repository")`. Retain the `.pom` and `.module` files: a bare AAR does not declare transitive dependencies. Google/Maven Central dependencies must still be available from those repositories or your existing cache.
+For an offline/local distribution, unzip `gifsnap-android-maven-0.1.2.zip` and point the same Maven repository block at the extracted `repository` directory, for example `url = uri("$rootDir/vendor/gifsnap/repository")`. Retain the `.pom` and `.module` files: a bare AAR does not declare transitive dependencies. Google/Maven Central dependencies must still be available from those repositories or your existing cache.
 
 ## Compose picker
 
@@ -87,7 +87,7 @@ val nextPage = result.pagination.nextPage
 val trendingStickers = client.trending(mediaType = MediaType.Stickers)
 ```
 
-The default base URL is `https://gifsnap.com/api/v1`. Search and trending are supported for GIFs and stickers. Queries must contain 1–200 characters; limits are 1–50 and pages 1–1,000,000. Invalid arguments throw `IllegalArgumentException`. Request query parameters are encoded; media URLs, their queries, string IDs, `source`, optional opaque `contentId`, response order and raw pagination counts are preserved. The documented fields are exposed as typed properties; unknown response fields are not surfaced. The client does not deduplicate results. `distinctGifs` is an optional presentation helper used by the picker: exact ID, exact full URL or equal non-null `contentId` matches retain the first occurrence. Titles and URL directories never establish identity.
+The default base URL is `https://gifsnap.com/api/v1`. Search and trending are supported for GIFs and stickers. Queries must contain 1–200 characters; limits are 1–50 and pages 1–1,000,000. Invalid arguments throw `IllegalArgumentException`. Request query parameters are encoded; media URLs, their queries, string IDs, `source`, optional opaque `contentId`, optional typed `animatedPreview`, response order and raw pagination counts are preserved. The documented fields are exposed as typed properties; unknown response fields are not surfaced. The client does not deduplicate results. `distinctGifs` is an optional presentation helper used by the picker: exact ID, exact full URL or equal non-null `contentId` matches retain the first occurrence. Titles and URL directories never establish identity.
 
 `GifSnapException` reports `code` (`Http`, `Network`, `Timeout`, `InvalidResponse`), optional `statusCode`, and the raw `retryAfter` header (seconds or HTTP date). Cancellation stays coroutine cancellation, not a wrapped API error. The default whole-call timeout is 15 seconds; allowed values are 1–120,000ms. Responses are bounded to 4 MiB and validated before use. Only absolute HTTP(S) media URLs without credentials, control characters, whitespace or backslashes are accepted; originals are never rewritten. HTTP media may be blocked by your application's normal Android security policy. Redirects and automatic HTTP retries are disabled for metadata requests. The client never sends credentials or telemetry.
 
