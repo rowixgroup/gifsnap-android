@@ -68,6 +68,11 @@ Search runs on explicit submission. Replacing a search or leaving composition ca
 
 ## Kotlin client
 
+See the [Kotlin client and HTTP response reference](docs/client-reference.md) for
+pagination, cancellation and the exact mapping between Kotlin properties and JSON
+fields. In particular, Kotlin `nextPage`/`hasNext` decode HTTP
+`next_page`/`has_next`; camelCase model properties are not the wire JSON format.
+
 Use from a coroutine (`viewModelScope`, `lifecycleScope`, or another owner):
 
 ```kotlin

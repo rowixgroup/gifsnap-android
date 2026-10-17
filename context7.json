@@ -11,7 +11,8 @@
     "The Compose picker requires Android API 28+; the client alone supports API 23+. Use Kotlin 2.2.10+, Java bytecode target 17, compileSdk 36+ and a Compose-enabled host. Follow the README for the tested toolchain.",
     "onSelect returns the original GifItem. Use gif.url for full animated media; previews may be static. The host controls sending and dismissal. The picker plays GIF and animated WebP, not video.",
     "Call suspend search(query, mediaType, page, limit) or trending(mediaType, page, limit) from a coroutine. Follow pagination.nextPage. Preserve IDs, complete URLs and source metadata; client responses are not deduplicated.",
-    "The default API is https://gifsnap.com/api/v1 and currently needs no key. Handle cancellation, failures and rate limits. SDK code is MIT licensed; API availability and media rights are separate. No SLA is promised."
+    "The default API is https://gifsnap.com/api/v1 and currently needs no key. Handle cancellation, failures and rate limits. SDK code is MIT licensed; API availability and media rights are separate. No SLA is promised.",
+    "HTTP JSON uses next_page, has_next, preview_url and content_id. Kotlin properties are nextPage, hasNext, previewUrl and contentId. Follow docs/client-reference.md for the wire contract; do not serialize Kotlin property names as the API response."
   ],
   "url": "https://context7.com/rowixgroup/gifsnap-android",
   "public_key": "pk_Q7FGqR8qqE2u7VACxiQA9"
