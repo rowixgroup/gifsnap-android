@@ -11,9 +11,9 @@ A typed Kotlin coroutine client and an animated GIF/sticker picker for Jetpack C
 
 ## Install
 
-Each [GitHub release](https://github.com/rowixgroup/gifsnap-android/releases) includes a Maven-layout ZIP that can be used immediately as a local repository. Hosted Maven availability is announced with the corresponding GifSnap website release; a GitHub tag alone does not indicate that hosted artifacts are available.
+Version **0.1.2** is available from GifSnap's hosted Maven repository. Each [GitHub release](https://github.com/rowixgroup/gifsnap-android/releases) also includes a Maven-layout ZIP for local use. For later versions, check hosted availability separately; a GitHub tag alone does not indicate that hosted artifacts are available.
 
-When your version is hosted, use GifSnap’s own Maven repository, **not Maven Central or JitPack**. Add the repository in `settings.gradle.kts` alongside the standard dependency repositories:
+Use GifSnap’s own Maven repository, **not Maven Central or JitPack**. Add the repository in `settings.gradle.kts` alongside the standard dependency repositories:
 
 ```kotlin
 dependencyResolutionManagement {

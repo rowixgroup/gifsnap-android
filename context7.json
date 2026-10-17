@@ -1,18 +1,18 @@
 {
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "GifSnap for Android",
-  "description": "Official GifSnap 0.1.1 Kotlin coroutine API client and animated GIF/sticker picker for Jetpack Compose. Install from GifSnap's hosted Maven repository. Canonical source: https://github.com/rowixgroup/gifsnap-android.",
+  "description": "Official GifSnap 0.1.2 Kotlin coroutine API client and animated GIF/sticker picker for Jetpack Compose. Install from GifSnap's hosted Maven repository. Canonical source: https://github.com/rowixgroup/gifsnap-android.",
   "folders": [],
   "excludeFolders": ["client", "compose", "sample", "test-consumer", "build", ".gradle", "gradle", "scripts"],
   "excludeFiles": ["CHANGELOG.md", "VERIFICATION.md", "LICENSE", "THIRD_PARTY_NOTICES.md"],
   "rules": [
-    "Add Maven repository https://gifsnap.com/sdk/android with group com.rowix.gifsnap. Install com.rowix.gifsnap:gifsnap-compose:0.1.1, or gifsnap-client:0.1.1 for a custom UI. GifSnap artifacts are not on Maven Central or JitPack.",
+    "Add Maven repository https://gifsnap.com/sdk/android for group com.rowix.gifsnap. Install com.rowix.gifsnap:gifsnap-compose:0.1.2 or gifsnap-client:0.1.2 for custom UI. GifSnap is not on Maven Central or JitPack.",
     "Import com.rowix.gifsnap.client.GifSnapClient and com.rowix.gifsnap.compose.GifSnapPicker. Keep the client with remember or a longer-lived owner; pass client and onSelect to the picker in a bounded-height container.",
     "The Compose picker requires Android API 28+; the client alone supports API 23+. Use Kotlin 2.2.10+, Java bytecode target 17, compileSdk 36+ and a Compose-enabled host. Follow the README for the tested toolchain.",
     "onSelect returns the original GifItem. Use gif.url for full animated media; previews may be static. The host controls sending and dismissal. The picker plays GIF and animated WebP, not video.",
     "Call suspend search(query, mediaType, page, limit) or trending(mediaType, page, limit) from a coroutine. Follow pagination.nextPage. Preserve IDs, complete URLs and source metadata; client responses are not deduplicated.",
     "The default API is https://gifsnap.com/api/v1 and currently needs no key. Handle cancellation, failures and rate limits. SDK code is MIT licensed; API availability and media rights are separate. No SLA is promised.",
-    "HTTP JSON uses next_page, has_next, preview_url and content_id. Kotlin properties are nextPage, hasNext, previewUrl and contentId. Follow docs/client-reference.md for the wire contract; do not serialize Kotlin property names as the API response."
+    "HTTP JSON uses next_page, has_next, preview_url and content_id. Kotlin properties are nextPage, hasNext, previewUrl and contentId. Follow docs/client-reference.md; do not use Kotlin property names in raw HTTP fixtures."
   ],
   "url": "https://context7.com/rowixgroup/gifsnap-android",
   "public_key": "pk_Q7FGqR8qqE2u7VACxiQA9"

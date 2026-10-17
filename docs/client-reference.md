@@ -1,8 +1,8 @@
 # GifSnap Android: Kotlin client and HTTP response reference
 
-This reference describes the published `com.rowix.gifsnap:gifsnap-client:0.1.1`
+This reference describes the published `com.rowix.gifsnap:gifsnap-client:0.1.2`
 client. Install it from `https://gifsnap.com/sdk/android`, or use
-`com.rowix.gifsnap:gifsnap-compose:0.1.1` to include the picker and client together.
+`com.rowix.gifsnap:gifsnap-compose:0.1.2` to include the picker and client together.
 The [README](../README.md) contains the complete Gradle configuration.
 
 ## Search and load the next page with Kotlin
@@ -61,6 +61,19 @@ The Kotlin client sends GET requests to these complete paths:
 `query` and `mediaType` are Kotlin arguments, not HTTP query parameter names.
 The search text is encoded as `q`; `mediaType` selects the path. The client sends
 `Accept: application/json` and defaults to page 1 with limit 24.
+
+For raw HTTP callers, omitted pagination instead defaults to page 1 and limit
+25. `page` and `limit` must be positive base-10 integers; valid limits above 50
+are capped at 50. Malformed or unsafe pagination and missing search text return
+HTTP 400; correct the request before retrying. Service failures can return 503.
+The Kotlin client validates its own arguments before making a request.
+
+Follow `has_next` and `next_page`, keeping the query and limit unchanged. An
+explicit upstream total stops continuation at the final page, including a full
+final page. When no upstream total is available, `total` is an estimate based on
+the offset and returned batch. An empty page always stops continuation. Keep
+raw counts separate from display deduplication and stop automatic fetching on
+duplicate-only batches.
 
 ## HTTP JSON fields and Kotlin properties
 
