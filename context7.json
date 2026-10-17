@@ -2,8 +2,8 @@
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "GifSnap for Android",
   "description": "Official GifSnap 0.1.2 Kotlin coroutine API client and animated GIF/sticker picker for Jetpack Compose. Install from GifSnap's hosted Maven repository. Canonical source: https://github.com/rowixgroup/gifsnap-android.",
-  "folders": [],
-  "excludeFolders": ["client", "compose", "sample", "test-consumer", "build", ".gradle", "gradle", "scripts"],
+  "folders": ["docs"],
+  "excludeFolders": ["_autodocs", "client", "compose", "sample", "test-consumer", "build", ".gradle", "gradle", "scripts"],
   "excludeFiles": ["CHANGELOG.md", "VERIFICATION.md", "LICENSE", "THIRD_PARTY_NOTICES.md"],
   "rules": [
     "Add Maven repository https://gifsnap.com/sdk/android for group com.rowix.gifsnap. Install com.rowix.gifsnap:gifsnap-compose:0.1.2 or gifsnap-client:0.1.2 for custom UI. GifSnap is not on Maven Central or JitPack.",
